@@ -55,37 +55,6 @@ weather-app/
 └── README.md           # This file
 ```
 
-## Setup Instructions
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/ashujsrfox/weather-app.git
-   cd weather-app
-   ```
-
-2. **Add your API Key**
-   - Open `script.js`
-   - Replace the placeholder API key with your OpenWeatherMap API key:
-   ```javascript
-   const API_KEY = 'your_api_key_here';
-   ```
-
-3. **Run locally**
-   - Open `index.html` in your web browser, or
-   - Use a local server:
-   ```bash
-   # Using Python
-   python -m http.server 8080
-   
-   # Using Node.js
-   npx serve .
-   
-   # Using PHP
-   php -S localhost:8080
-   ```
-
-4. **Access the app**
-   - Open `http://localhost:8080` in your browser
 
 ## Usage
 
@@ -160,7 +129,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Glassmorphism design inspiration from modern UI trends
 
 ## Contact
-
-Created by [Your Name] - [your.email@example.com]
 
 Project Link: [https://github.com/ashujsrfox/weather-app](https://github.com/ashujsrfox/weather-app)
