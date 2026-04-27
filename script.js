@@ -1,11 +1,15 @@
-
-
-const API_KEY = '6e03a3187ceebf658b7007f965d8ad11';
-const API_URL = 'https://api.openweathermap.org/data/2.5/weather';
-const FORECAST_URL = 'https://api.openweathermap.org/data/2.5/forecast';
-const GEO_API_URL = 'https://api.openweathermap.org/geo/1.0/direct';
+// Weather and geocoding go through same-origin `/api/*` proxy (see server.js). No API key in the browser.
+const API_BASE = '/api';
 const ICON_URL = 'https://openweathermap.org/img/wn';
 const DEGREE = '\u00B0';
+
+async function parseJsonSafe(response) {
+    try {
+        return await response.json();
+    } catch {
+        return null;
+    }
+}
 
 // DOM Elements
 const cityInput = document.getElementById('city-input');
@@ -73,10 +77,8 @@ document.addEventListener('click', (e) => {
 });
 
 async function fetchCitySuggestions(query) {
-    if (API_KEY === 'YOUR_API_KEY_HERE') return;
-
     try {
-        const url = `${GEO_API_URL}?q=${encodeURIComponent(query)}&limit=5&appid=${API_KEY}`;
+        const url = `${API_BASE}/geo?q=${encodeURIComponent(query)}&limit=5`;
         const response = await fetch(url);
 
         if (!response.ok) return;
@@ -130,24 +132,23 @@ function handleSearch() {
 }
 
 async function fetchWeatherData(city) {
-    if (API_KEY === 'YOUR_API_KEY_HERE') {
-        showError('Please add your OpenWeatherMap API key to script.js');
-        return;
-    }
-
     showLoading();
     hideError();
     hideWeather();
 
     try {
         const [currentResponse, forecastResponse] = await Promise.all([
-            fetch(`${API_URL}?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=metric`),
-            fetch(`${FORECAST_URL}?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=metric`)
+            fetch(`${API_BASE}/weather?q=${encodeURIComponent(city)}&units=metric`),
+            fetch(`${API_BASE}/forecast?q=${encodeURIComponent(city)}&units=metric`)
         ]);
 
-        if (!currentResponse.ok || !forecastResponse.ok) {
-            const errorData = await currentResponse.json();
-            throw new Error(errorData.message || 'City not found');
+        if (!currentResponse.ok) {
+            const errorData = await parseJsonSafe(currentResponse);
+            throw new Error(errorData?.message || 'City not found');
+        }
+        if (!forecastResponse.ok) {
+            const errorData = await parseJsonSafe(forecastResponse);
+            throw new Error(errorData?.message || 'Forecast unavailable');
         }
 
         const currentData = await currentResponse.json();
