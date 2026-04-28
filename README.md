@@ -17,6 +17,21 @@ REQUEST- The project requires refinement and there are several features that can
 
 [View the live demo here](https://ashujsrfox.github.io/weatherify/)
 
+**Note:** GitHub Pages serves static files only. The app expects a small local (or hosted) Node server that proxies OpenWeatherMap so the API key stays on the server. For the public Pages demo to keep working, maintainers need either a deployed proxy (for example Cloudflare Worker, Vercel serverless, or this `server.js` on a host) or a separate demo URL that runs behind that proxy.
+
+## Local development
+
+1. Install [Node.js](https://nodejs.org/) 18 or newer.
+2. From the project root, run `npm install`.
+3. Copy `.env.example` to `.env` and set `OPENWEATHER_API_KEY` to your [OpenWeatherMap API key](https://openweathermap.org/api).
+4. Run `npm start` and open `http://localhost:3000` (or the port shown in the terminal).
+
+Opening `index.html` directly in the browser (`file://`) will not work for weather requests, because the UI calls same-origin `/api/*` routes that are provided by `server.js`.
+
+### Key rotation (security)
+
+If an API key was ever committed to the frontend, **revoke it in the OpenWeatherMap dashboard** and create a new key. Only store the new key in `.env` (and in your host’s environment variables), never in `script.js` or other tracked client files.
+
 ## Technologies Used
 
 - **HTML5**: Semantic markup structure
@@ -33,19 +48,24 @@ REQUEST- The project requires refinement and there are several features that can
 
 ## API Integration
 
-This app uses the **OpenWeatherMap API** for weather data:
+This app uses the **OpenWeatherMap API** for weather data. The browser only talks to same-origin routes:
 
-- **Current Weather API**: `/data/2.5/weather`
-- **5-Day Forecast API**: `/data/2.5/forecast`
-- **Geocoding API**: `/geo/1.0/direct` (for city autocomplete)
+- **`GET /api/weather`** → OpenWeatherMap current weather (`/data/2.5/weather`)
+- **`GET /api/forecast`** → 5-day forecast (`/data/2.5/forecast`)
+- **`GET /api/geo`** → Geocoding (`/geo/1.0/direct`) for autocomplete
+
+The server adds `appid` from the `OPENWEATHER_API_KEY` environment variable. The key is not shipped in `script.js`.
 
 ## Project Structure
 
 ```
-weather-app/
+weatherify/
 ├── index.html          # Main HTML structure
 ├── style.css           # All styling and responsive design
-├── script.js           # JavaScript functionality
+├── script.js           # JavaScript functionality (calls /api/* only)
+├── server.js           # Static files + OpenWeatherMap proxy
+├── package.json
+├── .env.example        # Example env vars (copy to .env)
 └── README.md           # This file
 ```
 
