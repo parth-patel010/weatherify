@@ -161,8 +161,7 @@ Helpful commands (project-specific; replace with ones in this repo when present)
 
 ## Reporting security issues
 
-If you discover a security vulnerability, do not open a public issue. Contact the repository owner privately and provide enough detail to reproduce and fix the issue. If you need a formal process, we can add a SECURITY.md and a specific contact method.
-
+If you discover a security vulnerability, do not open a public issue. Contact the repository owner privately and provide enough detail to reproduce and fix the issue.
 ---
 
 ## Acknowledgements
