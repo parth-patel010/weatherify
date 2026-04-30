@@ -545,3 +545,47 @@ function hideError() {
 }
 
 setInterval(renderSunPosition, 60000);
+
+
+// ============================================================
+// ✅ ADDED: Dark Mode Toggle — Issue #14
+// ============================================================
+(function initDarkMode() {
+    const STORAGE_KEY = 'weatherify-theme';
+    const DARK_CLASS  = 'dark-mode';
+
+    const toggleBtn = document.getElementById('theme-toggle');
+    const icon      = toggleBtn ? toggleBtn.querySelector('.toggle-icon') : null;
+    const label     = toggleBtn ? toggleBtn.querySelector('.toggle-label') : null;
+
+    function applyTheme(isDark) {
+        document.body.classList.toggle(DARK_CLASS, isDark);
+        if (icon)      icon.textContent  = isDark ? '☀️' : '🌙';
+        if (label)     label.textContent = isDark ? 'Light' : 'Dark';
+        if (toggleBtn) toggleBtn.setAttribute('aria-pressed', String(isDark));
+    }
+
+    function getInitialPreference() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved !== null) return saved === 'dark';
+        return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+
+    // Apply before first paint to prevent flash
+    applyTheme(getInitialPreference());
+
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+            const isDark = !document.body.classList.contains(DARK_CLASS);
+            applyTheme(isDark);
+            localStorage.setItem(STORAGE_KEY, isDark ? 'dark' : 'light');
+        });
+    }
+
+    // Follow OS preference changes only if user hasn't manually chosen
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        if (localStorage.getItem(STORAGE_KEY) === null) {
+            applyTheme(e.matches);
+        }
+    });
+})();
