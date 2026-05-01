@@ -1,4 +1,4 @@
-# Weather App
+# Weatherify
 
 A modern, responsive weather application built with vanilla HTML, CSS, and JavaScript that displays current weather conditions and a 5-day forecast for any city worldwide.
 
